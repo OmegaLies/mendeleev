@@ -1,4 +1,4 @@
-class Element
+class Element < OpenStruct
   def initialize(params)
     @number = params[:number]
     @name = params[:name]

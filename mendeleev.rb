@@ -3,28 +3,17 @@
 require "json"
 require_relative "lib/element"
 
-file = File.read("#{__dir__}/data/table.json", encoding: "UTF-8")
-data = JSON.parse(file)
+data = JSON.parse(File.read("#{__dir__}/data/table.json", encoding: "UTF-8"), symbolize_names: true)
 table = {}
-data.each do |label, info|
-  element = Element.new(
-    number:  info["number"],
-    name:  info["name"],
-    density:  info["density"],
-    year:  info["year"],
-    discoverer:  info["discoverer"],
-  )
-  table[label] = element
-end
+data.each { |label, info| table[label] = Element.new(info) }
 
 puts "Известные элементы:"
-table.keys.each.with_index(1) do|label, index|
-  print "#{"%2s" % label} | "
-  puts if index % 5 == 0
+table.keys.each_slice(5) do |labels|
+  labels.each { |label| print "#{"%2s" % label} | "}
+  puts
 end
-puts
 puts "О каком элементе хотите узнать?"
-label = STDIN.gets.chomp
+label = STDIN.gets.chomp.capitalize.to_sym
 if table.key?(label)
   puts table[label]
 else
