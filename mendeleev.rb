@@ -3,15 +3,12 @@
 require "json"
 require_relative "lib/element"
 
-data = JSON.parse(File.read("#{__dir__}/data/table.json", encoding: "UTF-8"), symbolize_names: true)
-table = {}
-data.each { |label, info| table[label] = Element.new(info) }
+lines = File.read("#{__dir__}/data/table.json", encoding: "UTF-8")
+table = JSON.parse(lines, symbolize_names: true, object_class: Element).to_h
 
 puts "Известные элементы:"
-table.keys.each_slice(5) do |labels|
-  labels.each { |label| print "#{"%2s" % label} | "}
-  puts
-end
+table.each_key.each_slice(5) { |labels| puts labels.map { |label| "#{"%2s" % label}"}.join(" | ") }
+
 puts "О каком элементе хотите узнать?"
 label = STDIN.gets.chomp.capitalize.to_sym
 if table.key?(label)
